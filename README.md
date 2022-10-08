@@ -3,7 +3,7 @@ T2Tools is a tool contains several tools for T2T assembly, and it is under devel
 
 ## Dependencies
 ### Software
-* Python 3
+* Python (>=3.7)
 * TRF (Tandem Repeat Finder)
 ### Python Modules
 * pathos
