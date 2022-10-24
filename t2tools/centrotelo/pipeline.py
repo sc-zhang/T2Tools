@@ -94,7 +94,7 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split, threads):
     centro = CentroIdentifier(trf_loader.get_bed_list())
     centro.identify()
     with open(path.join(out_dir, "centro.list"), 'w') as fout:
-        fout.write("#sid\tstart_pos\tend_pos\tlength\tcopy_num\tscore\tpattern\tseq")
+        fout.write("#sid\tstart_pos\tend_pos\tlength\tcopy_num\tscore\tpattern\tseq\n")
         for _ in sorted(centro.get_centro_list()):
             fout.write("%s\n" % ('\t'.join(map(str, _))))
 
