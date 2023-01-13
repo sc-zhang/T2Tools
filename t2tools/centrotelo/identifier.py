@@ -68,7 +68,7 @@ class CentroIdentifier(CentroTeloIdentifier):
                 continue
             info = [col for col in _]
             if self.__is_split:
-                sid, offset, send = info[0].split('_')
+                sid, offset, send = info[0].split(':::')
                 offset = int(offset)-1
                 info[0] = sid
                 info[1] += offset
@@ -116,7 +116,7 @@ class TeloIdentifier(CentroTeloIdentifier):
         if self.__is_split:
             length_db = {}
             for id in self.__seq_length:
-                sid = id.split('_')[0]
+                sid = id.split(':::')[0]
                 if sid not in length_db:
                     length_db[sid] = 0
                 length_db[sid] += self.__seq_length[id]

@@ -84,9 +84,9 @@ class Fasta:
         end_pos = window_size
         seq_length = len(seq)
         while start_pos < seq_length:
-            out_fasta_file = "%s_%d_%d.fasta" % (sid, start_pos + 1, end_pos)
+            out_fasta_file = "%s:::%d:::%d.fasta" % (sid, start_pos + 1, end_pos)
             with open(path.join(out_dir, out_fasta_file), 'w') as fout:
-                fout.write(">%s_%d_%d\n%s\n" % (sid, start_pos+1, end_pos, seq[start_pos: end_pos]))
+                fout.write(">%s:::%d:::%d\n%s\n" % (sid, start_pos+1, end_pos, seq[start_pos: end_pos]))
             start_pos += step_size
             end_pos = min(start_pos + window_size, seq_length)
 
