@@ -91,7 +91,7 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split, threads):
             fout.write("%s\n" % ('\t'.join(map(str, _))))
 
     print("Identifying centromeres and telomeres")
-    centro = CentroIdentifier(trf_loader.get_bed_list())
+    centro = CentroIdentifier(trf_loader.get_bed_list(), is_split)
     centro.identify()
     with open(path.join(out_dir, "centro.list"), 'w') as fout:
         fout.write("#sid\tstart_pos\tend_pos\tlength\tcopy_num\tscore\tpattern\tseq\n")

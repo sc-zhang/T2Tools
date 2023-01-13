@@ -26,13 +26,14 @@ class CentroIdentifier(CentroTeloIdentifier):
         __centro_list: a list of centromeres
     """
 
-    def __init__(self, bed_list):
+    def __init__(self, bed_list, is_split):
         """
         Init attributes
         bed_list: simplified bed loaded by io.TRFData
         """
         super().__init__(bed_list)
         self.__centro_list = []
+        self.__is_split = is_split
 
     def identify(self):
         """This function is for identifying centromeres from trf result which loaded by io.TRFData
@@ -65,9 +66,15 @@ class CentroIdentifier(CentroTeloIdentifier):
             score = _[5]
             if copy_num < 10 or score < 1000:
                 continue
-
+            info = [col for col in _]
+            if self.__is_split:
+                sid, offset, send = info[0].split('_')
+                offset = int(offset)-1
+                info[0] = sid
+                info[1] += offset
+                info[2] += offset
             if max_pattern - 1 <= pattern_length <= max_pattern + 1:
-                self.__centro_list.append(_)
+                self.__centro_list.append(info)
 
     def get_centro_list(self):
         """This function return the centromere information identified
@@ -117,23 +124,24 @@ class TeloIdentifier(CentroTeloIdentifier):
 
         for _ in self._bed_list:
             # each line of _bed_list is like below:
-            # sid, start_pos, end_pos, telo_size, telo_pattern, pos, copy_num
+            # sid, start_pos, end_pos, length, copy_num, score, pattern, seq
             sid = _[0]
             start_pos = _[1]
             end_pos = _[2]
-            if self.__is_split:
-                sid, offset, _ = sid.split('_')
-                offset = int(offset)-1
-                start_pos += offset
-                end_pos += offset
-
-            if start_pos < self.__seq_length[sid] / 2.:
-                pos_marker = "start"
-            elif end_pos > self.__seq_length[sid] / 2.:
-                pos_marker = "end"
-            else:
-                continue
             if telo_pattern in _[-1] or rev_telo_pattern in _[-1]:
+                if self.__is_split:
+                    sid, offset, send = sid.split('_')
+                    offset = int(offset)-1
+                    start_pos += offset
+                    end_pos += offset
+
+                if start_pos < self.__seq_length[sid] / 2.:
+                    pos_marker = "start"
+                elif end_pos > self.__seq_length[sid] / 2.:
+                    pos_marker = "end"
+                else:
+                    continue
+
                 self.__telo_list.append([sid, start_pos, end_pos, _[3], _[-2], pos_marker, _[4]])
 
     def get_telo_list(self):
