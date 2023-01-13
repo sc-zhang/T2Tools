@@ -98,7 +98,7 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split, threads):
         for _ in sorted(centro.get_centro_list()):
             fout.write("%s\n" % ('\t'.join(map(str, _))))
 
-    telo = TeloIdentifier(trf_loader.get_bed_list(), fa_loader.get_length())
+    telo = TeloIdentifier(trf_loader.get_bed_list(), fa_loader.get_length(), is_split)
     telo.identify()
     with open(path.join(out_dir, "telo.list"), 'w') as fout:
         fout.write("#sid\tstart_pos\tend_pos\ttelo_size\ttelo_pattern\tpos\tcopy_num\n")

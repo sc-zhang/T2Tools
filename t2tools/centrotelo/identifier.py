@@ -85,16 +85,18 @@ class TeloIdentifier(CentroTeloIdentifier):
         __telo_list: a list of telomeres
     """
 
-    def __init__(self, bed_list, seq_length):
+    def __init__(self, bed_list, seq_length, is_split):
         """
         Init attributes
         Args:
             bed_list: simplified bed loaded by io.TRFData
             seq_length: a dictionary of all sequences length
+            is_split: if the sequence of fasta is split, position need convert with offset
         """
         super().__init__(bed_list)
         self.__telo_list = []
         self.__seq_length = seq_length
+        self.__is_split = is_split
 
     def identify(self):
         """This function is for identifying telomeres from trf result which loaded by io.TRFData
@@ -104,13 +106,27 @@ class TeloIdentifier(CentroTeloIdentifier):
         """
         telo_pattern = "TTTAGGG" * 10
         rev_telo_pattern = "CCCTAAA" * 10
+        if self.__is_split:
+            length_db = {}
+            for id in self.__seq_length:
+                sid = id.split('_')[0]
+                if sid not in length_db:
+                    length_db[sid] = 0
+                length_db[sid] += self.__seq_length[id]
+            self.__seq_length = length_db
 
         for _ in self._bed_list:
             # each line of _bed_list is like below:
-            # sid, start_pos, end_pos, length, copy_num, score, pattern, seq
+            # sid, start_pos, end_pos, telo_size, telo_pattern, pos, copy_num
             sid = _[0]
             start_pos = _[1]
             end_pos = _[2]
+            if self.__is_split:
+                sid, offset, _ = sid.split('_')
+                offset = int(offset)-1
+                start_pos += offset
+                end_pos += offset
+
             if start_pos < self.__seq_length[sid] / 2.:
                 pos_marker = "start"
             elif end_pos > self.__seq_length[sid] / 2.:
