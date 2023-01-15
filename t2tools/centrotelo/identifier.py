@@ -130,7 +130,7 @@ class TeloIdentifier(CentroTeloIdentifier):
             end_pos = _[2]
             if telo_pattern in _[-1] or rev_telo_pattern in _[-1]:
                 if self.__is_split:
-                    sid, offset, send = sid.split('_')
+                    sid, offset, send = sid.split(':::')
                     offset = int(offset)-1
                     start_pos += offset
                     end_pos += offset
