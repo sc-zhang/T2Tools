@@ -16,7 +16,7 @@ def main():
                                                              "scientific notation, like: 10000, 1e4")
     parser_centrotelo.add_argument("-o", "--output", help="output directory", required=True)
     parser_centrotelo.add_argument("-t", "--threads", help="threads, default: 10", type=int, default=10)
-    parser_centrotelo.set_defaults(func=t2tools.centrotelo.pipeline.main)
+    parser_centrotelo.set_defaults(func=t2tools.workflow.pipeline.main)
 
     try:
         args = parser.parse_args()
