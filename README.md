@@ -1,5 +1,5 @@
 ## Introduction
-T2Tools is a tool contains several tools for T2T assembly, and it is under development.
+T2Tools is a toolset contains several tools for T2T assembly, and it is under development.
 
 ## Dependencies
 ### Software
