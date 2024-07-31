@@ -12,9 +12,10 @@ T2Tools is a toolset contains several tools for T2T assembly, and it is under de
 
 ## Usage
 
-1. Identify centromere and telomere for genome
+### 1. Identify centromere and telomere for genome
+a) Usage
 ```bash
-usage: t2tools.py centrotelo [-h] -f FASTA [-p] [-w WINDOW_SIZE] [-s STEP_SIZE] [--lower LOWER] [--upper UPPER] [--copy COPY] [--score SCORE] -o OUTPUT [-t THREADS]
+usage: t2tools.py centel [-h] -f FASTA [-p] [-w WINDOW_SIZE] [-s STEP_SIZE] [--lower LOWER] [--upper UPPER] [--copy COPY] [--score SCORE] -o OUTPUT [-t THREADS]
 
 options:
   -h, --help            show this help message and exit
@@ -34,3 +35,19 @@ options:
   -t THREADS, --threads THREADS
                         threads, default: 10
 ```
+b) Example
+```shell
+t2tools.py centel -f chrom_dir -o wrkdir -t 24 --lower 50 --upper 250
+```
+
+c) Result
+* **trf_total.bed**: a text file that contain several columns extracted from the dat file of trf like below
+
+| sid  | start_pos | end_pos | length | copy_num | score  | pattern | seq                         |
+|------|-----------|---------|--------|----------|--------|---------|-----------------------------|
+| Chr1 | 11        | 2711    | 2701   | 432.2    | 2306.0 | ACCCTA  | ACCCTAACCCTAACCCTAACCCTA... |
+
+* **centro.list**: a text file that contain candidate centromere regions
+* **telo.list**: a text file that contain candidate telomere regions
+* **whole.pdf**: a distribution plot of "Repeat monomer length (nt)" and "Number of monomer"
+* **separated.pdf**: similar with whole.pdf but draw each chromosome separately 
