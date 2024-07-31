@@ -68,19 +68,22 @@ class Visualizer:
         elif mode == 'single':
             # automatic adjust row and col
             total_cnt = len(self.__trf_db)
+            if total_cnt > 100:
+                return False
+
             if total_cnt < 5:
                 row = 1
                 col = total_cnt
             elif total_cnt < 9:
                 row = 2
-                col = int(round(total_cnt*1./row+.49, 0))
+                col = int(round(total_cnt * 1. / row + .49, 0))
             else:
                 col = int(sqrt(total_cnt))
                 while not total_cnt % col == 0:
                     col -= 1
                 if col == 1:
                     col = int(sqrt(total_cnt))
-                    row = int(round(total_cnt*1./col+.49, 0))
+                    row = int(round(total_cnt * 1. / col + .49, 0))
                 else:
                     row = total_cnt // col
 
@@ -89,17 +92,23 @@ class Visualizer:
             for sid in sorted(self.__trf_db, key=lambda x: int(re.findall(r'\d+', x)[0])):
                 x = [_ for _ in sorted(self.__trf_db[sid])]
                 y = [self.__trf_db[sid][_] for _ in sorted(self.__trf_db[sid])]
-                ax[idx // col][idx % col].plot(x, y, color='black', lw=1)
-                ax[idx // col][idx % col].set_xticks([_ for _ in range(self.__lower, self.__upper + 1, 50)],
-                                                     [str(_) for _ in range(self.__lower, self.__upper + 1, 50)])
-                ax[idx // col][idx % col].set_title(sid,
-                                                    fontdict={'size': 20, 'weight': 'bold'},
-                                                    pad=20)
+                if row == 1:
+                    cur_ax = ax[idx]
+                else:
+                    cur_ax = ax[idx // col][idx % col]
+                cur_ax.plot(x, y, color='black', lw=1)
+                cur_ax.set_xticks([_ for _ in range(self.__lower, self.__upper + 1, 50)],
+                                  [str(_) for _ in range(self.__lower, self.__upper + 1, 50)])
+                cur_ax.set_title(sid,
+                                 fontdict={'size': 20, 'weight': 'bold'},
+                                 pad=20)
                 idx += 1
-            fig.text(0.5, 0.08, "Repeat monomer length (nt)",
+            fig.text(0.5, 0.01*row, "Repeat monomer length (nt)",
                      fontdict={'size': 20, 'weight': 'bold'}, ha='center')
-            fig.text(0.08, 0.5, "Number of monomer",
+            fig.text(0.05, 0.5, "Number of monomer",
                      fontdict={'size': 20, 'weight': 'bold'}, va='center', rotation=90)
             plt.subplots_adjust(wspace=.25, hspace=.5)
             plt.savefig(out_pdf, bbox_inches='tight')
             plt.close('all')
+
+        return True
