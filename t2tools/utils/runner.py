@@ -43,7 +43,7 @@ class Runner:
         Returns:
             None
         """
-        p = Popen(self._cmd, stdout=PIPE, stderr=PIPE, shell=True)
+        p = Popen(self._cmd, stdout=PIPE, stderr=PIPE, shell=True, encoding='utf-8')
         self._res, self._err = p.communicate()
 
     def get_result(self):

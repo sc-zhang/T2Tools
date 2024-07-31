@@ -105,9 +105,15 @@ class Visualizer:
                                  fontdict={'size': 20, 'weight': 'bold'},
                                  pad=20)
                 idx += 1
+
+            # delete extra axes
+            while idx < row * col:
+                fig.delaxes(ax[idx // col][idx % col])
+                idx += 1
+
             fig.text(0.5, 0.01*row, "Repeat monomer length (nt)",
                      fontdict={'size': 20, 'weight': 'bold'}, ha='center')
-            fig.text(0.05, 0.5, "Number of monomer",
+            fig.text(0.01*col, 0.5, "Number of monomer",
                      fontdict={'size': 20, 'weight': 'bold'}, va='center', rotation=90)
             plt.subplots_adjust(wspace=.25, hspace=.5)
             plt.savefig(out_pdf, bbox_inches='tight')
