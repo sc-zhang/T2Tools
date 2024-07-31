@@ -53,7 +53,7 @@ class Runner:
         return self._err
 
 
-class CentroTeloTRFRunner(Runner):
+class CenTelTRFRunner(Runner):
     """
     This class is a subclass of Runner, it can create command for identifying centromeres and telomeres
     """

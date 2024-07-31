@@ -1,4 +1,4 @@
-class CentroTeloIdentifier:
+class CenTelIdentifier:
     """
     This class is base class for identifying centromeres and telomeres
 
@@ -19,7 +19,7 @@ class CentroTeloIdentifier:
         self._bed_list = bed_list
 
 
-class CentroIdentifier(CentroTeloIdentifier):
+class CentroIdentifier(CenTelIdentifier):
     """
     This class is a subclass of CentroTeloIdentifier for identifying centromeres
     Attributes:
@@ -95,7 +95,7 @@ class CentroIdentifier(CentroTeloIdentifier):
         return self.__centro_list
 
 
-class TeloIdentifier(CentroTeloIdentifier):
+class TeloIdentifier(CenTelIdentifier):
     """
     This class is a subclass of CentroTeloIdentifier for identifying telomeres
     Attributes:

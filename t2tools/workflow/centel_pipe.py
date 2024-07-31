@@ -1,6 +1,6 @@
-from t2tools.centrotelo.identifier import CentroIdentifier, TeloIdentifier
-from t2tools.centrotelo.visualizer import Visualizer
-from t2tools.utils.runner import CentroTeloTRFRunner
+from t2tools.centel.identifier import CentroIdentifier, TeloIdentifier
+from t2tools.centel.visualizer import Visualizer
+from t2tools.utils.runner import CenTelTRFRunner
 from t2tools.utils.io import Fasta, TRFData
 from t2tools.utils.message import Message
 from os import path, makedirs, system, listdir, chdir
@@ -9,7 +9,7 @@ from pathos.multiprocessing import Pool
 
 def run_trf(trf_dir, fasta_file):
     chdir(trf_dir)
-    r = CentroTeloTRFRunner()
+    r = CenTelTRFRunner()
     r.set_command(fasta_file)
     r.print_command()
     r.run()
@@ -102,7 +102,7 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split,
     visualizer = Visualizer(trf_loader.get_bed_list(), is_split, lower, upper)
     out_pdf = path.join(out_dir, "whole.pdf")
     visualizer.visualize(out_pdf, "whole")
-    out_pdf = path.join(out_dir, "seperated.pdf")
+    out_pdf = path.join(out_dir, "separated.pdf")
     visualizer.visualize(out_pdf, "single")
 
     Message.info("Identifying centromeres and telomeres")
