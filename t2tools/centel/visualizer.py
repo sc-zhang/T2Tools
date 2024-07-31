@@ -92,7 +92,9 @@ class Visualizer:
             for sid in sorted(self.__trf_db, key=lambda x: int(re.findall(r'\d+', x)[0])):
                 x = [_ for _ in sorted(self.__trf_db[sid])]
                 y = [self.__trf_db[sid][_] for _ in sorted(self.__trf_db[sid])]
-                if row == 1:
+                if row == 1 and col == 1:
+                    cur_ax = ax
+                elif row == 1:
                     cur_ax = ax[idx]
                 else:
                     cur_ax = ax[idx // col][idx % col]
