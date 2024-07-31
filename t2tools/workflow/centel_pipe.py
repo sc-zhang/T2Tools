@@ -55,7 +55,7 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split,
             step_size = float(step_size)
             fa_loader = Fasta()
             fa_loader.load_fasta(input_fasta)
-            fa_loader.split_fasta(fa_dir, window_size, step_size, threads)
+            fa_loader.split_with_win(fa_dir, window_size, step_size, threads)
         fa_loader = Fasta()
         fa_loader.load_fasta_dir(fa_dir)
     else:
@@ -64,8 +64,9 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split,
             fa_dir = path.join(out_dir, 'separated')
             if not path.exists(fa_dir):
                 makedirs(fa_dir)
-
-            system("ln -s %s %s/input.fa" % (path.abspath(input_fasta), fa_dir))
+            fa_loader = Fasta()
+            fa_loader.load_fasta(input_fasta)
+            fa_loader.split_fasta(fa_dir, threads)
         else:
             fa_dir = path.abspath(input_fasta)
 
@@ -111,9 +112,13 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split,
     Message.info("Visualizing trf results")
     visualizer = Visualizer(trf_loader.get_bed_list(), is_split, lower, upper)
     out_pdf = path.join(out_dir, "whole.pdf")
-    visualizer.visualize(out_pdf, "whole")
+    status = visualizer.visualize(out_pdf, "whole")
+    if not status:
+        Message.error("Could not draw whole figure")
     out_pdf = path.join(out_dir, "separated.pdf")
-    visualizer.visualize(out_pdf, "single")
+    status = visualizer.visualize(out_pdf, "single")
+    if not status:
+        Message.error("Could not draw separated figure, may caused by more than 100 sequences")
 
     Message.info("Identifying centromeres and telomeres")
     centro = CentroIdentifier(trf_loader.get_bed_list(), is_split, lower, upper, minium_copy_number, minium_score)
