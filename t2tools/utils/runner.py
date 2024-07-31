@@ -1,4 +1,5 @@
-from os import popen
+from subprocess import Popen, PIPE
+from t2tools.utils.message import Message
 
 
 class Runner:
@@ -14,7 +15,8 @@ class Runner:
         Init attributes
         """
         self._cmd = ""
-        self._res = []
+        self._res = ""
+        self._err = ""
 
     def set_command(self, cmd):
         """This function is for setting command to run
@@ -33,7 +35,7 @@ class Runner:
         Returns:
             None
         """
-        print(self._cmd)
+        Message.info(self._cmd)
 
     def run(self):
         """This function is for running command with os.popen, and store result to list _res
@@ -41,17 +43,14 @@ class Runner:
         Returns:
             None
         """
-        with popen(self._cmd, 'r') as fin:
-            for line in fin:
-                self._res.append(line)
+        p = Popen(self._cmd, stdout=PIPE, stderr=PIPE, shell=True)
+        self._res, self._err = p.communicate()
 
     def get_result(self):
-        """This function return a string of result
+        return self._res
 
-        Returns:
-            A result string
-        """
-        return ''.join(self._res)
+    def get_err(self):
+        return self._err
 
 
 class CentroTeloTRFRunner(Runner):

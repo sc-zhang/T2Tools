@@ -1,6 +1,8 @@
 from t2tools.centrotelo.identifier import CentroIdentifier, TeloIdentifier
+from t2tools.centrotelo.visualizer import Visualizer
 from t2tools.utils.runner import CentroTeloTRFRunner
 from t2tools.utils.io import Fasta, TRFData
+from t2tools.utils.message import Message
 from os import path, makedirs, system, listdir, chdir
 from pathos.multiprocessing import Pool
 
@@ -20,25 +22,31 @@ def main(args):
     window_size = args.window_size
     step_size = args.step_size
     is_split = args.split
+    lower = args.lower
+    upper = args.upper
+    minium_copy_number = args.copy
+    minium_score = args.score
     threads = args.threads
-    pipeline(input_fasta, out_dir, window_size, step_size, is_split, threads)
+    pipeline(input_fasta, out_dir, window_size, step_size, is_split,
+             lower, upper, minium_copy_number, minium_score, threads)
 
 
-def pipeline(input_fasta, out_dir, window_size, step_size, is_split, threads):
+def pipeline(input_fasta, out_dir, window_size, step_size, is_split,
+             lower, upper, minium_copy_number, minium_score, threads):
     if not path.exists(out_dir):
         makedirs(out_dir)
 
-    print("Loading fasta")
+    Message.info("Loading fasta")
     if is_split:
         fa_dir = path.join(out_dir, 'separated')
         if not path.exists(fa_dir):
             makedirs(fa_dir)
 
             if not path.isfile(input_fasta):
-                print("Fatal error: split function can only apply on single fasta file")
+                Message.info("Fatal error: split function can only apply on single fasta file")
                 exit(-1)
             if not window_size or not step_size:
-                print("Fatal error: window_size and step_size is required while split is on")
+                Message.info("Fatal error: window_size and step_size is required while split is on")
                 exit(-1)
 
             # Split fasta with slide windows
@@ -63,7 +71,7 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split, threads):
         fa_loader = Fasta()
         fa_loader.load_fasta_dir(fa_dir)
 
-    print("Running trf")
+    Message.info("Running trf")
     # Running trf multiprocessing
     trf_dir = path.join(out_dir, "trf_dat")
     if not path.exists(trf_dir):
@@ -78,9 +86,9 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split, threads):
         pool.close()
         pool.join()
     else:
-        print("%s found, skip." % trf_dir)
+        Message.info("%s found, skip." % trf_dir)
 
-    print("Loading trf results")
+    Message.info("Loading trf results")
     trf_loader = TRFData()
     for trf_file in listdir(trf_dir):
         if trf_file.endswith('.dat'):
@@ -90,8 +98,15 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split, threads):
         for _ in trf_loader.get_bed_list():
             fout.write("%s\n" % ('\t'.join(map(str, _))))
 
-    print("Identifying centromeres and telomeres")
-    centro = CentroIdentifier(trf_loader.get_bed_list(), is_split)
+    Message.info("Visualizing trf results")
+    visualizer = Visualizer(trf_loader.get_bed_list(), is_split, lower, upper)
+    out_pdf = path.join(out_dir, "whole.pdf")
+    visualizer.visualize(out_pdf, "whole")
+    out_pdf = path.join(out_dir, "seperated.pdf")
+    visualizer.visualize(out_pdf, "single")
+
+    Message.info("Identifying centromeres and telomeres")
+    centro = CentroIdentifier(trf_loader.get_bed_list(), is_split, lower, upper, minium_copy_number, minium_score)
     centro.identify()
     with open(path.join(out_dir, "centro.list"), 'w') as fout:
         fout.write("#sid\tstart_pos\tend_pos\tlength\tcopy_num\tscore\tpattern\tseq\n")
@@ -105,4 +120,4 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split, threads):
         for _ in sorted(telo.get_telo_list()):
             fout.write("%s\n" % ('\t'.join(map(str, _))))
 
-    print("Finished")
+    Message.info("Finished")

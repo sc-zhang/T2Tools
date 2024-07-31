@@ -26,7 +26,7 @@ class CentroIdentifier(CentroTeloIdentifier):
         __centro_list: a list of centromeres
     """
 
-    def __init__(self, bed_list, is_split):
+    def __init__(self, bed_list, is_split, lower, upper, minium_copy_number, minium_score):
         """
         Init attributes
         bed_list: simplified bed loaded by io.TRFData
@@ -34,6 +34,10 @@ class CentroIdentifier(CentroTeloIdentifier):
         super().__init__(bed_list)
         self.__centro_list = []
         self.__is_split = is_split
+        self.__lower = lower
+        self.__upper = upper
+        self.__minium_copy_number = minium_copy_number
+        self.__minium_score = minium_score
 
     def identify(self):
         """This function is for identifying centromeres from trf result which loaded by io.TRFData
@@ -44,7 +48,7 @@ class CentroIdentifier(CentroTeloIdentifier):
         length_db = {}
         for _, _, _, length, _, _, pattern, _ in self._bed_list:
             pattern_length = len(pattern)
-            if pattern_length < 50 or pattern_length > 200:
+            if pattern_length < self.__lower or pattern_length > self.__upper:
                 continue
 
             if pattern_length not in length_db:
@@ -66,7 +70,7 @@ class CentroIdentifier(CentroTeloIdentifier):
             pattern_length = len(_[-2])
             copy_num = _[4]
             score = _[5]
-            if copy_num < 10 or score < 1000:
+            if copy_num < self.__minium_copy_number or score < self.__minium_score:
                 continue
             info = [col for col in _]
             if self.__is_split:
