@@ -3,7 +3,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import re
 
-
 mpl.use("Agg")
 
 
@@ -55,8 +54,8 @@ class Visualizer:
             x = [_ for _ in sorted(whole_trf_db)]
             y = [whole_trf_db[_] for _ in sorted(whole_trf_db)]
             plt.plot(x, y, color='black', lw=1)
-            plt.xticks([_ for _ in range(self.__lower, self.__upper+1, 50)],
-                       [str(_) for _ in range(self.__lower, self.__upper+1, 50)])
+            plt.xticks([_ for _ in range(self.__lower, self.__upper + 1, 50)],
+                       [str(_) for _ in range(self.__lower, self.__upper + 1, 50)])
             plt.yticks(rotation=90, va="center")
             plt.xlabel("Repeat monomer length (nt)",
                        fontdict={'size': 20, 'weight': 'bold'},
@@ -67,17 +66,32 @@ class Visualizer:
             plt.savefig(out_pdf, bbox_inches="tight")
             plt.close('all')
         elif mode == 'single':
+            # automatic adjust row and col
             total_cnt = len(self.__trf_db)
-            col = int(sqrt(total_cnt))
-            row = int(round(total_cnt*1./col + 0.49, 0))
-            fig, ax = plt.subplots(nrows=row, ncols=col, figsize=(col*4, row*4), dpi=100)
+            if total_cnt < 5:
+                row = 1
+                col = total_cnt
+            elif total_cnt < 9:
+                row = 2
+                col = int(round(total_cnt*1./row+.49, 0))
+            else:
+                col = int(sqrt(total_cnt))
+                while not total_cnt % col == 0:
+                    col -= 1
+                if col == 1:
+                    col = int(sqrt(total_cnt))
+                    row = int(round(total_cnt*1./col+.49, 0))
+                else:
+                    row = total_cnt // col
+
+            fig, ax = plt.subplots(nrows=row, ncols=col, figsize=(col * 4, row * 4), dpi=100)
             idx = 0
             for sid in sorted(self.__trf_db, key=lambda x: int(re.findall(r'\d+', x)[0])):
                 x = [_ for _ in sorted(self.__trf_db[sid])]
                 y = [self.__trf_db[sid][_] for _ in sorted(self.__trf_db[sid])]
                 ax[idx // col][idx % col].plot(x, y, color='black', lw=1)
-                ax[idx // col][idx % col].set_xticks([_ for _ in range(self.__lower, self.__upper+1, 50)],
-                                                     [str(_) for _ in range(self.__lower, self.__upper+1, 50)])
+                ax[idx // col][idx % col].set_xticks([_ for _ in range(self.__lower, self.__upper + 1, 50)],
+                                                     [str(_) for _ in range(self.__lower, self.__upper + 1, 50)])
                 ax[idx // col][idx % col].set_title(sid,
                                                     fontdict={'size': 20, 'weight': 'bold'},
                                                     pad=20)

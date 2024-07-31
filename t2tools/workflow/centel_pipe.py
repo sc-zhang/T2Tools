@@ -13,6 +13,7 @@ def run_trf(trf_dir, fasta_file):
     r.set_command(fasta_file)
     r.print_command()
     r.run()
+    return r.get_result(), r.get_err()
 
 
 def main(args):
@@ -78,13 +79,22 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split,
         makedirs(trf_dir)
 
         pool = Pool(processes=threads)
+        res = []
         for fasta_file in listdir(fa_dir):
             if not fasta_file.endswith(".fa") and not fasta_file.endswith(".fasta"):
                 continue
             fasta_file = path.join(fa_dir, fasta_file)
-            pool.apply_async(run_trf, (trf_dir, fasta_file,))
+            r = pool.apply_async(run_trf, (trf_dir, fasta_file,))
+            res.append(r)
         pool.close()
         pool.join()
+
+        flog = open(path.join(out_dir, 'trf.log'), 'w')
+        ferr = open(path.join(out_dir, 'trf.err'), 'w')
+        for r in res:
+            log_info, err_info = r.get()
+            flog.write("%s\n" % log_info)
+            ferr.write("%s\n" % err_info)
     else:
         Message.info("%s found, skip." % trf_dir)
 
