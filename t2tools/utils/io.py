@@ -9,6 +9,7 @@ class Fasta:
         __fasta_file:   A string of input fasta file name
         __fasta_db:     A dictionary for all sequences in fasta file, key means sequence id, value means sequence
     """
+
     def __init__(self):
         """
         Init attributes
@@ -86,11 +87,11 @@ class Fasta:
         while start_pos < seq_length:
             out_fasta_file = "%s:::%d:::%d.fasta" % (sid, start_pos + 1, end_pos)
             with open(path.join(out_dir, out_fasta_file), 'w') as fout:
-                fout.write(">%s:::%d:::%d\n%s\n" % (sid, start_pos+1, end_pos, seq[start_pos: end_pos]))
+                fout.write(">%s:::%d:::%d\n%s\n" % (sid, start_pos + 1, end_pos, seq[start_pos: end_pos]))
             start_pos += step_size
             end_pos = min(start_pos + window_size, seq_length)
 
-    def split_fasta(self, out_dir, window_size, step_size, threads):
+    def split_with_win(self, out_dir, window_size, step_size, threads):
         """This function is for splitting fasta by calling __split_seq with multi threads
 
         Args:
@@ -113,6 +114,32 @@ class Fasta:
         pool.close()
         pool.join()
 
+    @staticmethod
+    def __write_seq(out_dir, sid, seq):
+        out_fasta_file = path.join(out_dir, "%s.fasta" % sid)
+        with open(out_fasta_file, "w") as fout:
+            fout.write(">%s\n%s\n" % (sid, seq))
+
+    def split_fasta(self, out_dir, threads):
+        """This function is for extracting sequences from fasta
+
+                Args:
+                    threads:        thread count for splitting fasta
+                    out_dir:        directory for store separated sequences
+
+                Returns:
+
+                """
+
+        if not path.exists(out_dir):
+            makedirs(out_dir)
+
+        pool = Pool(processes=threads)
+        for sid in self.__fasta_db:
+            pool.apply_async(self.__write_seq, (out_dir, sid, self.__fasta_db[sid],))
+        pool.close()
+        pool.join()
+
 
 class TRFData:
     """
@@ -123,6 +150,7 @@ class TRFData:
                      ...
                     ]
     """
+
     def __init__(self):
         """
         Init attributes
@@ -168,7 +196,7 @@ class TRFData:
             else:
                 start_pos = int(data[0])
                 end_pos = int(data[1])
-                length = abs(start_pos-end_pos)+1
+                length = abs(start_pos - end_pos) + 1
                 pattern = data[-2]
                 copy_num = float(data[3])
                 score = float(data[7])
