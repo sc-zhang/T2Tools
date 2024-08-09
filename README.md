@@ -10,6 +10,20 @@ T2Tools is a toolset contains several tools for T2T assembly, and it is under de
 * numpy
 * pathos
 
+
+## Installation
+
+Add <kbd>TRF</kbd> to your environment variable PATH
+```bash
+cd /path/to/install
+git clone https://github.com/sc-zhang/T2Tools.git
+pip install -r requirements.txt
+chmod +x T2Tools/t2tools.py
+echo 'export PATH=/path/to/install/T2Tools:$PATH' >> ~/.bash_profile
+source ~/.bash_profile
+```
+
+
 ## Usage
 
 ### 1. Identify centromere and telomere for genome
