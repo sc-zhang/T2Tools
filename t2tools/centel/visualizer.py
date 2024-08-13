@@ -81,7 +81,7 @@ class Visualizer:
                 col = int(sqrt(total_cnt))
                 while not total_cnt % col == 0:
                     col -= 1
-                if col == 1:
+                if col <= 2:
                     col = int(sqrt(total_cnt))
                     row = int(round(total_cnt * 1. / col + .49, 0))
                 else:
