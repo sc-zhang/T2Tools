@@ -120,6 +120,14 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split,
     if not status:
         Message.error("Could not draw separated figure, may caused by more than 100 sequences")
 
+    max_monomers_info = visualizer.get_max_monomers_info()
+    with open("centro_max_monomers.list") as fout:
+        fout.write("#sid\tmonomer_length\tmonomer_count\n")
+        for sid in sorted(max_monomers_info):
+            if sid != "Whole":
+                fout.write("%s\t%d\t%d\n" % (sid, max_monomers_info[sid][0], max_monomers_info[sid][1]))
+        fout.write("Whole\t%d\t%d\n" % (max_monomers_info["Whole"][0], max_monomers_info["Whole"][1]))
+
     Message.info("Identifying centromeres and telomeres")
     centro = CentroIdentifier(trf_loader.get_bed_list(), is_split, lower, upper, minium_copy_number, minium_score)
     centro.identify()

@@ -13,6 +13,7 @@ class Visualizer:
         self.__lower = lower
         self.__upper = upper
         self.__trf_db = {}
+        self.__max_repeat_monomers_db = {}
         self.load()
 
     def load(self):
@@ -43,6 +44,7 @@ class Visualizer:
             self.__trf_db[sid][monomer_len] += copy_num
 
     def visualize(self, out_pdf, mode='whole'):
+        self.__max_repeat_monomers_db = {"Whole": [0, 0]}
         if mode == 'whole':
             whole_trf_db = {}
             for sid in self.__trf_db:
@@ -53,6 +55,12 @@ class Visualizer:
             plt.figure(figsize=(10, 10), dpi=100)
             x = [_ for _ in sorted(whole_trf_db)]
             y = [whole_trf_db[_] for _ in sorted(whole_trf_db)]
+
+            for monomer_len, monomer_cnt in zip(x, y):
+                if monomer_cnt > self.__max_repeat_monomers_db["Whole"][1]:
+                    self.__max_repeat_monomers_db["Whole"][0] = monomer_len
+                    self.__max_repeat_monomers_db["Whole"][1] = monomer_cnt
+
             plt.plot(x, y, color='black', lw=1)
             plt.xticks([_ for _ in range(self.__lower, self.__upper + 1, 50)],
                        [str(_) for _ in range(self.__lower, self.__upper + 1, 50)])
@@ -92,6 +100,13 @@ class Visualizer:
             for sid in sorted(self.__trf_db, key=lambda x: int(re.findall(r'\d+', x)[0])):
                 x = [_ for _ in sorted(self.__trf_db[sid])]
                 y = [self.__trf_db[sid][_] for _ in sorted(self.__trf_db[sid])]
+
+                self.__max_repeat_monomers_db[sid] = [0, 0]
+                for monomer_len, monomer_cnt in zip(x, y):
+                    if monomer_cnt > self.__max_repeat_monomers_db[sid][1]:
+                        self.__max_repeat_monomers_db[sid][0] = monomer_len
+                        self.__max_repeat_monomers_db[sid][1] = monomer_cnt
+
                 if row == 1 and col == 1:
                     cur_ax = ax
                 elif row == 1:
@@ -120,3 +135,7 @@ class Visualizer:
             plt.close('all')
 
         return True
+
+    def get_max_monomers_info(self):
+        # max_repeat_monomers_db is like: sid => [monomer length, monomer count]
+        return self.__max_repeat_monomers_db
