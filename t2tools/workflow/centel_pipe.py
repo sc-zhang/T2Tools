@@ -121,7 +121,7 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split,
         Message.error("Could not draw separated figure, may caused by more than 100 sequences")
 
     max_monomers_info = visualizer.get_max_monomers_info()
-    with open("centro_max_monomers.list", 'w') as fout:
+    with open(path.join(out_dir, "centro_max_monomers.list"), 'w') as fout:
         fout.write("#sid\tmonomer_length\tmonomer_count\n")
         for sid in sorted(max_monomers_info):
             if sid != "Whole":

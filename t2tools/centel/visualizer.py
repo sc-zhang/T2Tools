@@ -13,7 +13,7 @@ class Visualizer:
         self.__lower = lower
         self.__upper = upper
         self.__trf_db = {}
-        self.__max_repeat_monomers_db = {}
+        self.__max_repeat_monomers_db = {"Whole": [0, 0]}
         self.load()
 
     def load(self):
@@ -44,7 +44,6 @@ class Visualizer:
             self.__trf_db[sid][monomer_len] += copy_num
 
     def visualize(self, out_pdf, mode='whole'):
-        self.__max_repeat_monomers_db = {"Whole": [0, 0]}
         if mode == 'whole':
             whole_trf_db = {}
             for sid in self.__trf_db:
