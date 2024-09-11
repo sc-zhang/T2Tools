@@ -17,6 +17,30 @@ class Fasta:
         self.__fasta_file = ""
         self.__fasta_db = {}
 
+    @staticmethod
+    def get_fasta_gaps(fasta_file):
+        total_cnt = 0
+        gap_db = {}
+        with open(fasta_file, 'r') as fin:
+            sid = ''
+            gap_cnt = 0
+            for line in fin:
+                if line[0] == '>':
+                    if sid != '':
+                        gap_db[sid] = gap_cnt
+                        total_cnt += gap_cnt
+                    sid = line.strip()[1:]
+                    gap_cnt = 0
+                    last_base = ''
+                else:
+                    for i in range(len(line.strip())):
+                        if line[i].lower() == 'n' and last_base != 'n':
+                            gap_cnt += 1
+                        last_base = line[i].lower()
+            gap_db[sid] = gap_cnt
+            gap_db["Total"] = total_cnt
+        return gap_db
+
     def load_fasta(self, fasta_file):
         """This is fasta load function
 
