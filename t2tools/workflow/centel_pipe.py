@@ -3,7 +3,7 @@ from t2tools.centel.visualizer import Visualizer
 from t2tools.utils.runner import CenTelTRFRunner
 from t2tools.utils.io import Fasta, TRFData
 from t2tools.utils.message import Message
-from os import path, makedirs, system, listdir, chdir
+from os import path, makedirs, listdir, chdir
 from pathos.multiprocessing import Pool
 
 
