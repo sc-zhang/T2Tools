@@ -98,7 +98,7 @@ options:
 
 b) Example
 ```bash
-t2tools.py gap -f chrom.fa -o chrom.gap_cnt.txt
+t2tools.py gapcount -f chrom.fa -o chrom.gap_cnt.txt
 ```
 
 c) Result
