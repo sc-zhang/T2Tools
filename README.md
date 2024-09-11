@@ -36,7 +36,7 @@ options:
 sub commands:
   {centel,gap}
     centel      Identify centromeres and telomeres
-    gap         Get gap counts
+    gapcount    Get gap counts
 ```
 > **Notice:** details of sub commands were described below.
 
@@ -86,7 +86,7 @@ c) Result
 ### 2. Get gap counts
 a) Usage
 ```bash
-usage: t2tools.py gap [-h] -f FASTA [-o OUTPUT]
+usage: t2tools.py gapcount [-h] -f FASTA [-o OUTPUT]
 
 options:
   -h, --help            show this help message and exit

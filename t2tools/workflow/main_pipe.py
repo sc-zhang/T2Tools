@@ -27,7 +27,7 @@ def main():
     parser_centel.add_argument("-t", "--threads", help="threads, default: 10", type=int, default=10)
     parser_centel.set_defaults(func=t2tools.workflow.centel_pipe.main)
 
-    parser_gap_cnt = subparsers.add_parser('gap', help='Get gap counts')
+    parser_gap_cnt = subparsers.add_parser('gapcount', help='Get gap counts')
     parser_gap_cnt.add_argument('-f', '--fasta', help="fasta file", required=True)
     parser_gap_cnt.add_argument('-o', '--output', help="output statistic, if not set, output to stdout")
     parser_gap_cnt.set_defaults(func=t2tools.workflow.gap_cnt_pipe.main)
