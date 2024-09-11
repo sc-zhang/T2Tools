@@ -26,6 +26,21 @@ source ~/.bash_profile
 
 ## Usage
 
+### 0. Main program
+```bash
+usage: t2tools.py [-h] {centel,gap} ...
+
+options:
+  -h, --help    show this help message and exit
+
+sub commands:
+  {centel,gap}
+    centel      Identify centromeres and telomeres
+    gap         Get gap counts
+```
+> **Notice:** details of sub commands were described below.
+
+
 ### 1. Identify centromere and telomere for genome
 a) Usage
 ```bash
@@ -49,6 +64,7 @@ options:
   -t THREADS, --threads THREADS
                         threads, default: 10
 ```
+
 b) Example
 ```shell
 t2tools.py centel -f chrom_dir -o wrkdir -t 24 --lower 50 --upper 250
@@ -65,3 +81,26 @@ c) Result
 * **telo.list**: a text file that contain candidate telomere regions
 * **whole.pdf**: a distribution plot of "Repeat monomer length (nt)" and "Number of monomer"
 * **separated.pdf**: similar with whole.pdf but draw each chromosome separately 
+
+
+### 2. Get gap counts
+a) Usage
+```bash
+usage: t2tools.py gap [-h] -f FASTA [-o OUTPUT]
+
+options:
+  -h, --help            show this help message and exit
+  -f FASTA, --fasta FASTA
+                        fasta file
+  -o OUTPUT, --output OUTPUT
+                        output statistic, if not set, output to stdout
+```
+
+b) Example
+```bash
+t2tools.py gap -f chrom.fa -o chrom.gap_cnt.txt
+```
+
+c) Result
+A text file with two columns, first column is sequence id, second column is gap count, 
+the last row is "Total" means total count of gaps  
