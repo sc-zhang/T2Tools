@@ -96,7 +96,7 @@ class Visualizer:
 
             fig, ax = plt.subplots(nrows=row, ncols=col, figsize=(col * 4, row * 4), dpi=100)
             idx = 0
-            for sid in sorted(self.__trf_db, key=lambda x: int(re.findall(r'\d+', x)[0])
+            for sid in sorted(self.__trf_db, key=lambda x: [int(re.findall(r'\d+', x)[0]), x] 
                               if len(re.findall(r'\d+', x)) > 0 else 1000):
                 x = [_ for _ in sorted(self.__trf_db[sid])]
                 y = [self.__trf_db[sid][_] for _ in sorted(self.__trf_db[sid])]
