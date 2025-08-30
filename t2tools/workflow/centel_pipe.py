@@ -7,10 +7,13 @@ from os import path, makedirs, listdir, chdir
 from pathos.multiprocessing import Pool
 
 
-def run_trf(trf_dir, fasta_file):
+def run_trf(trf_dir, fasta_file, trf_options):
     chdir(trf_dir)
     r = CenTelTRFRunner()
-    r.set_command(fasta_file)
+    if not trf_options:
+        r.set_command(fasta_file)
+    else:
+        r.set_command_with_custom_trf_options(fasta_file, trf_options)
     r.print_command()
     r.run()
     return r.get_result(), r.get_err()
@@ -27,13 +30,22 @@ def main(args):
     upper = args.upper
     minium_copy_number = args.copy
     minium_score = args.score
+    trf_options = args.trf_options if args.trf_options else ""
+    if args.telo_type == "plant":
+        telo_pattern = "TTTAGGG" * 10
+        rev_telo_pattern = "CCCTAAA" * 10
+    else:
+        telo_pattern = "TTAGGG" * 10
+        rev_telo_pattern = "CCCTAA" * 10
     threads = args.threads
     pipeline(input_fasta, out_dir, window_size, step_size, is_split,
-             lower, upper, minium_copy_number, minium_score, threads)
+             lower, upper, telo_pattern, rev_telo_pattern, minium_copy_number,
+             minium_score, trf_options, threads)
 
 
 def pipeline(input_fasta, out_dir, window_size, step_size, is_split,
-             lower, upper, minium_copy_number, minium_score, threads):
+             lower, upper, telo_pattern, rev_telo_pattern, minium_copy_number,
+             minium_score, trf_options, threads):
     if not path.exists(out_dir):
         makedirs(out_dir)
 
@@ -85,7 +97,7 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split,
             if not fasta_file.endswith(".fa") and not fasta_file.endswith(".fasta"):
                 continue
             fasta_file = path.join(fa_dir, fasta_file)
-            r = pool.apply_async(run_trf, (trf_dir, fasta_file,))
+            r = pool.apply_async(run_trf, (trf_dir, fasta_file, trf_options,))
             res.append(r)
         pool.close()
         pool.join()
@@ -136,7 +148,7 @@ def pipeline(input_fasta, out_dir, window_size, step_size, is_split,
         for _ in sorted(centro.get_centro_list()):
             fout.write("%s\n" % ('\t'.join(map(str, _))))
 
-    telo = TeloIdentifier(trf_loader.get_bed_list(), fa_loader.get_length(), is_split)
+    telo = TeloIdentifier(trf_loader.get_bed_list(), fa_loader.get_length(), telo_pattern, rev_telo_pattern, is_split)
     telo.identify()
     with open(path.join(out_dir, "telo.list"), 'w') as fout:
         fout.write("#sid\tstart_pos\tend_pos\ttelo_size\ttelo_pattern\tpos\tcopy_num\n")

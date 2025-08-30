@@ -7,7 +7,7 @@ def main():
     subparsers = parser.add_subparsers(title="sub commands")
     parser_centel = subparsers.add_parser('centel', help='Identify centromeres and telomeres')
     parser_centel.add_argument("-f", "--fasta", help="fasta file or directory", required=True)
-    parser_centel.add_argument("-p", "--split", help="split fasta or not, only for single fasta",
+    parser_centel.add_argument("-p", "--split", help="split fasta or not, only for single fasta file",
                                action="store_true")
     parser_centel.add_argument("-w", "--window_size", help="window size for splitting fasta, "
                                                            "must be integer or scientific notation, "
@@ -15,6 +15,11 @@ def main():
     parser_centel.add_argument("-s", "--step_size", help="step size for splitting fasta, "
                                                          "must be integer or scientific notation, "
                                                          "like: 10000, 1e4")
+    parser_centel.add_argument('--trf_options', help="custom parameters for running trf", default="")
+    parser_centel.add_argument('--telo_type',
+                               help="pattern for telomere search, plant search TTTAGGG, "
+                                    "animal search TTAGGG, default=plant",
+                               choices=["plant", "animal"], default="plant")
     parser_centel.add_argument('--lower', help="lower size of centromere repeat monomer, "
                                                "default=50", type=int, default=50)
     parser_centel.add_argument('--upper', help="upper size of centromere repeat monomer, "

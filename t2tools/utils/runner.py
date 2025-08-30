@@ -10,6 +10,7 @@ class Runner:
         _cmd:   command for running
         _res:   a list for storing result lines
     """
+
     def __init__(self):
         """
         Init attributes
@@ -57,6 +58,7 @@ class CenTelTRFRunner(Runner):
     """
     This class is a subclass of Runner, it can create command for identifying centromeres and telomeres
     """
+
     def set_command(self, fasta_file):
         """This function is to generate command with trf for centromeres and telomeres
 
@@ -80,3 +82,16 @@ class CenTelTRFRunner(Runner):
         param_order = ["File", "Match", "Mismatch", "Delta", "PM", "PI", "Minscore", "MaxPeriod", "options"]
         cmd_list = [str(TRF_PARAM[_]) for _ in param_order]
         self._cmd = "trf %s" % (' '.join(cmd_list))
+
+    def set_command_with_custom_trf_options(self, fasta_file, trf_options):
+        """This function is to generate command with trf for centromeres and telomeres
+            with custom options
+
+        Args:
+            fasta_file: input fasta file
+            trf_options: custom trf options
+
+        Returns:
+            None
+        """
+        self._cmd = "trf \"%s\" %s" % (fasta_file, trf_options)
