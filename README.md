@@ -33,15 +33,16 @@ source ~/.bash_profile
 ### 0. Main program
 
 ```bash
-usage: t2tools.py [-h] {centel,gap} ...
+usage: t2tools.py [-h] {centel,visual,gapcount} ...
 
 options:
-  -h, --help    show this help message and exit
+  -h, --help            show this help message and exit
 
 sub commands:
-  {centel,gap}
-    centel      Identify centromeres and telomeres
-    gapcount    Get gap counts
+  {centel,visual,gapcount}
+    centel              Identify centromeres and telomeres
+    visual              Visualizing trf data
+    gapcount            Get gap counts
 ```
 
 > **Notice:** details of sub commands were described below.
@@ -95,7 +96,35 @@ c) Result
 * **whole.pdf**: a distribution plot of "Repeat monomer length (nt)" and "Number of monomer"
 * **separated.pdf**: similar with whole.pdf but draw each chromosome separately
 
-### 2. Get gap counts
+### 2. Visualize trf data
+
+a) Usage
+
+```bash
+usage: t2tools.py visual [-h] -i INPUT [--lower LOWER] [--upper UPPER] -o OUTPUT
+
+options:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        input trf directory
+  --lower LOWER         lower size of centromere repeat monomer, default=50
+  --upper UPPER         upper size of centromere repeat monomer, default=200
+  -o OUTPUT, --output OUTPUT
+                        output directory
+```
+
+b) Example
+
+```shell
+t2tools.py visual -i trf_dat -o visual --lower 50 --upper 250
+```
+
+c) Result
+
+* **whole.pdf**: a distribution plot of "Repeat monomer length (nt)" and "Number of monomer"
+* **separated.pdf**: similar with whole.pdf but draw each chromosome separately
+
+### 3. Get gap counts
 
 a) Usage
 
@@ -117,5 +146,6 @@ t2tools.py gapcount -f chrom.fa -o chrom.gap_cnt.txt
 ```
 
 c) Result
+
 A text file with two columns, first column is sequence id, second column is gap count,
 the last row is "Total" means total count of gaps  
