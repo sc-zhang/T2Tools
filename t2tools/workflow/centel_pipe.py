@@ -81,12 +81,12 @@ def pipeline(
             makedirs(fa_dir)
 
             if not path.isfile(input_fasta):
-                Message.info(
+                Message.error(
                     "Fatal error: split function can only apply on single fasta file"
                 )
                 exit(-1)
             if not window_size or not step_size:
-                Message.info(
+                Message.error(
                     "Fatal error: window_size and step_size is required while split is on"
                 )
                 exit(-1)
@@ -149,6 +149,12 @@ def pipeline(
 
     Message.info("Visualizing trf results")
     trf_loader = trf2bed(trf_dir, out_dir)
+    if not trf_loader.get_bed_list():
+        Message.error(
+            "Fatal error: trf result empty, please remove trf_dat directory, and rerun, if still empty, "
+            "try different trf parameter or not split genome."
+        )
+        exit(-1)
     plotter(trf_loader, out_dir, lower, upper, is_split)
 
     Message.info("Identifying centromeres and telomeres")
