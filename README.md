@@ -52,7 +52,9 @@ sub commands:
 a) Usage
 
 ```bash
-usage: t2tools.py centel [-h] -f FASTA [-p] [-w WINDOW_SIZE] [-s STEP_SIZE] [--trf_options TRF_OPTIONS] [--telo_type {plant,animal}] [--lower LOWER] [--upper UPPER] [--copy COPY] [--score SCORE] -o OUTPUT [-t THREADS]
+usage: t2tools.py centel [-h] -f FASTA [-p] [-w WINDOW_SIZE] [-s STEP_SIZE] [--trf_options TRF_OPTIONS]
+                         [--telo_type {plant,animal}] [--lower LOWER] [--upper UPPER] [--copy COPY] [--score SCORE] -o
+                         OUTPUT [-t THREADS]
 
 options:
   -h, --help            show this help message and exit
@@ -64,7 +66,8 @@ options:
   -s STEP_SIZE, --step_size STEP_SIZE
                         step size for splitting fasta, must be integer or scientific notation, like: 10000, 1e4
   --trf_options TRF_OPTIONS
-                        custom parameters for running trf
+                        custom parameters for running trf:<match> <mismatch> <delta> <PM> <PI> <minscore> <MaxPeriod>
+                        [options], default: 1 1 2 80 50 200 2000
   --telo_type {plant,animal}
                         pattern for telomere search, plant search TTTAGGG, animal search TTAGGG, default=plant
   --lower LOWER         lower size of centromere repeat monomer, default=50
