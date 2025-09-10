@@ -28,7 +28,7 @@ class Runner:
         Returns:
             None
         """
-        self._cmd = "\"%s\"" % cmd
+        self._cmd = '"%s"' % cmd
 
     def print_command(self):
         """This function is for printing current command
@@ -44,7 +44,7 @@ class Runner:
         Returns:
             None
         """
-        p = Popen(self._cmd, stdout=PIPE, stderr=PIPE, shell=True, encoding='utf-8')
+        p = Popen(self._cmd, stdout=PIPE, stderr=PIPE, shell=True, encoding="utf-8")
         self._res, self._err = p.communicate()
 
     def get_result(self):
@@ -69,7 +69,7 @@ class CenTelTRFRunner(Runner):
             None
         """
         TRF_PARAM = {
-            "File": "\"%s\"" % fasta_file,
+            "File": '"%s"' % fasta_file,
             "Match": 1,
             "Mismatch": 1,
             "Delta": 2,
@@ -77,11 +77,21 @@ class CenTelTRFRunner(Runner):
             "PI": 5,
             "Minscore": 200,
             "MaxPeriod": 2000,
-            "options": "-d -h"
+            "options": "-d -h",
         }
-        param_order = ["File", "Match", "Mismatch", "Delta", "PM", "PI", "Minscore", "MaxPeriod", "options"]
+        param_order = [
+            "File",
+            "Match",
+            "Mismatch",
+            "Delta",
+            "PM",
+            "PI",
+            "Minscore",
+            "MaxPeriod",
+            "options",
+        ]
         cmd_list = [str(TRF_PARAM[_]) for _ in param_order]
-        self._cmd = "trf %s" % (' '.join(cmd_list))
+        self._cmd = "trf %s" % (" ".join(cmd_list))
 
     def set_command_with_custom_trf_options(self, fasta_file, trf_options):
         """This function is to generate command with trf for centromeres and telomeres
@@ -94,4 +104,4 @@ class CenTelTRFRunner(Runner):
         Returns:
             None
         """
-        self._cmd = "trf \"%s\" %s" % (fasta_file, trf_options)
+        self._cmd = 'trf "%s" %s -d -h' % (fasta_file, trf_options)

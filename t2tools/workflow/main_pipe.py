@@ -32,7 +32,10 @@ def main():
         "like: 10000, 1e4",
     )
     parser_centel.add_argument(
-        "--trf_options", help="custom parameters for running trf", default=""
+        "--trf_options",
+        help="custom parameters for running trf:"
+        "<match> <mismatch> <delta> <PM> <PI> <minscore> <MaxPeriod> [options], default: 1 1 2 80 50 200 2000",
+        default="1 1 2 80 5 200 2000",
     )
     parser_centel.add_argument(
         "--telo_type",
