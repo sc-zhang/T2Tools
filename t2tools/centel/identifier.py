@@ -26,7 +26,9 @@ class CentroIdentifier(CenTelIdentifier):
         __centro_list: a list of centromeres
     """
 
-    def __init__(self, bed_list, is_split, lower, upper, minium_copy_number, minium_score):
+    def __init__(
+        self, bed_list, is_split, lower, upper, minium_copy_number, minium_score
+    ):
         """
         Init attributes
         bed_list: simplified bed loaded by io.TRFData
@@ -81,7 +83,7 @@ class CentroIdentifier(CenTelIdentifier):
                 continue
             info = [col for col in _]
             if self.__is_split:
-                sid, offset, send = info[0].split(':::')
+                sid, offset, send = info[0].split(":::")
                 offset = int(offset) - 1
                 info[0] = sid
                 info[1] += offset
@@ -102,6 +104,40 @@ class CentroIdentifier(CenTelIdentifier):
             A list of centromere information
         """
         return self.__centro_list
+
+    def get_best_centro_list(self):
+        """This function return the best centromere information identified
+
+        Returns:
+            A list of centromere information
+        """
+        merged_centro_list = []
+        last_chr = ""
+        for _ in sorted(self.__centro_list):
+            if not merged_centro_list or _[0] != last_chr:
+                merged_centro_list.append([_[0], _[1], _[2], [_]])
+            else:
+                if _[1] < merged_centro_list[-1][2]:
+                    if _[2] > merged_centro_list[-1][2]:
+                        merged_centro_list[-1][2] = _[2]
+                        merged_centro_list[-1][-1].append(_)
+                else:
+                    merged_centro_list.append([_[0], _[1], _[2], [_]])
+            last_chr = _[0]
+
+        best_candidate_centro_db = {}
+        for _ in merged_centro_list:
+            if (
+                _[0] not in best_candidate_centro_db
+                or _[2] - _[1] + 1
+                > best_candidate_centro_db[_[0]][2] - best_candidate_centro_db[_[0]][1]
+            ):
+                best_candidate_centro_db[_[0]] = _
+
+        best_candidate_centro_list = []
+        for _ in sorted(best_candidate_centro_db):
+            best_candidate_centro_list.append(best_candidate_centro_db[_])
+        return best_candidate_centro_list
 
 
 class TeloIdentifier(CenTelIdentifier):
@@ -135,7 +171,7 @@ class TeloIdentifier(CenTelIdentifier):
         if self.__is_split:
             length_db = {}
             for id in self.__seq_length:
-                sid = id.split(':::')[0]
+                sid = id.split(":::")[0]
                 if sid not in length_db:
                     length_db[sid] = 0
                 length_db[sid] += self.__seq_length[id]
@@ -151,27 +187,52 @@ class TeloIdentifier(CenTelIdentifier):
             end_pos = _[2]
             if self.__telo_pattern in _[-1] or self.__rev_telo_pattern in _[-1]:
                 if self.__is_split:
-                    sid, offset, send = sid.split(':::')
+                    sid, offset, send = sid.split(":::")
                     offset = int(offset) - 1
                     start_pos += offset
                     end_pos += offset
 
-                if start_pos < self.__seq_length[sid] / 2.:
+                if start_pos < self.__seq_length[sid] / 2.0:
                     pos_marker = "start"
-                elif end_pos > self.__seq_length[sid] / 2.:
+                elif end_pos > self.__seq_length[sid] / 2.0:
                     pos_marker = "end"
                 else:
-                    continue
+                    pos_marker = "undetermined"
                 info = tuple([sid, start_pos, end_pos])
                 if info in telo_set:
                     continue
                 telo_set.add(info)
-                self.__telo_list.append([sid, start_pos, end_pos, _[3], _[-2], pos_marker, _[4]])
+                self.__telo_list.append(
+                    [sid, start_pos, end_pos, _[3], _[-2], pos_marker, _[4]]
+                )
 
     def get_telo_list(self):
-        """This function return the centromere information identified
+        """This function return the telomere information identified
 
         Returns:
             A list of telomere information
         """
         return self.__telo_list
+
+    def get_best_telo_list(self):
+        """This function return the best telomere information identified
+
+        Returns:
+            A list of telomere information
+        """
+        best_candidate_telo_db = {}
+        for _ in sorted(self.__telo_list):
+            sid = _[0]
+            sp = _[1]
+            ep = _[2]
+            if sid not in best_candidate_telo_db:
+                best_candidate_telo_db[sid] = [_, _]
+            if sp < best_candidate_telo_db[sid][0][1]:
+                best_candidate_telo_db[sid][0] = _
+            if ep > best_candidate_telo_db[sid][1][2]:
+                best_candidate_telo_db[sid][1] = _
+
+        best_telo_list = []
+        for _ in sorted(best_candidate_telo_db):
+            best_telo_list.extend(best_candidate_telo_db[_])
+        return best_telo_list

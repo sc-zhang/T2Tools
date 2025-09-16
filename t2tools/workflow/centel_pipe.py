@@ -167,10 +167,22 @@ def pipeline(
         minium_score,
     )
     centro.identify()
-    with open(path.join(out_dir, "centro.list"), "w") as fout:
+    with open(path.join(out_dir, "all_candidate_centro.list"), "w") as fout:
         fout.write("#sid\tstart_pos\tend_pos\tlength\tcopy_num\tscore\tpattern\tseq\n")
         for _ in sorted(centro.get_centro_list()):
             fout.write("%s\n" % ("\t".join(map(str, _))))
+
+    centro.get_best_centro_list()
+    with open(path.join(out_dir, "best_candidate_centro.list"), "w") as fout:
+        for _ in centro.get_best_centro_list():
+            fout.write("#Candidate region:\t%s\t%d\t%d\n" % (_[0], _[1], _[2]))
+            fout.write("#Merged regions\n")
+            fout.write(
+                "#\tsid\tstart_pos\tend_pos\tlength\tcopy_num\tscore\tpattern\tseq\n"
+            )
+            for __ in _[-1]:
+                fout.write("\t%s\n" % ("\t".join(map(str, __))))
+            fout.write("\n")
 
     telo = TeloIdentifier(
         trf_loader.get_bed_list(),
@@ -180,9 +192,14 @@ def pipeline(
         is_split,
     )
     telo.identify()
-    with open(path.join(out_dir, "telo.list"), "w") as fout:
+    with open(path.join(out_dir, "all_candidate_telo.list"), "w") as fout:
         fout.write("#sid\tstart_pos\tend_pos\ttelo_size\ttelo_pattern\tpos\tcopy_num\n")
         for _ in sorted(telo.get_telo_list()):
+            fout.write("%s\n" % ("\t".join(map(str, _))))
+
+    with open(path.join(out_dir, "best_candidate_telo.list"), "w") as fout:
+        fout.write("#sid\tstart_pos\tend_pos\ttelo_size\ttelo_pattern\tpos\tcopy_num\n")
+        for _ in sorted(telo.get_best_telo_list()):
             fout.write("%s\n" % ("\t".join(map(str, _))))
 
     Message.info("Finished")

@@ -94,8 +94,10 @@ c) Result
 |------|-----------|---------|--------|----------|--------|---------|-----------------------------|
 | Chr1 | 11        | 2711    | 2701   | 432.2    | 2306.0 | ACCCTA  | ACCCTAACCCTAACCCTAACCCTA... |
 
-* **centro.list**: a text file that contain candidate centromere regions
-* **telo.list**: a text file that contain candidate telomere regions
+* **all_candidate_centro.list**: a text file that contain all candidate centromere regions
+* **best_candidate_centro.list**: a text file that contain best candidate centromere regions
+* **all_candidate_telo.list**: a text file that contain all candidate telomere regions
+* **best_candidate_telo.list**: a text file that contain best candidate telomere regions
 * **whole.pdf**: a distribution plot of "Repeat monomer length (nt)" and "Number of monomer"
 * **separated.pdf**: similar with whole.pdf but draw each chromosome separately
 
