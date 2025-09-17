@@ -234,5 +234,8 @@ class TeloIdentifier(CenTelIdentifier):
 
         best_telo_list = []
         for _ in sorted(best_candidate_telo_db):
-            best_telo_list.extend(best_candidate_telo_db[_])
+            if best_candidate_telo_db[_][0] == best_candidate_telo_db[_][1]:
+                best_telo_list.append(best_candidate_telo_db[_][0])
+            else:
+                best_telo_list.extend(best_candidate_telo_db[_])
         return best_telo_list
